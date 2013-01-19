@@ -33,6 +33,8 @@ This script understands the following command-line arguments:
 # (C) Siebrand Mazeland, 2007
 # (C) xqt, 2009-2013
 # (C) Dr. Trigon, 2011-2012
+# (C) DeltaQuad, 2013-2013
+# (C) Riley Huntley, 2013-2013
 #
 # DrTrigonBot: http://de.wikipedia.org/wiki/Benutzer:DrTrigonBot
 # Clean User Sandbox Robot (clean_user_sandbox.py)
