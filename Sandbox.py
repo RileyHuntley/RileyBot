@@ -120,17 +120,17 @@ sandboxTitle = {
 user_content = {
     'de': u'{{Benutzer:DrTrigonBot/Spielwiese}}',
     }
-
+ 
 user_sandboxTemplate = {
     'de': u'User:DrTrigonBot/Spielwiese',
     }
-
+ 
 class SandboxBot:
-    def __init__(self, hours, no_repeat, delay, user):
-        self.hours = hours
+    def __init__(self, minutes, no_repeat, delay, user):
+        self.minutes = minutes
         self.no_repeat = no_repeat
         if delay == None:
-            self.delay = min(15, max(5, int(self.hours *60)))
+            self.delay = min(15, max(5, int(self.minutes *60)))
         else:
             self.delay = max(5, delay)
         self.user = user
@@ -144,9 +144,9 @@ class SandboxBot:
             if self.site.lang not in user_sandboxTemplate:
                 sandboxTitle[self.site.lang] = []
                 pywikibot.output(u'Not properly set-up to run in user namespace!')
-
+ 
     def run(self):
-
+ 
         def minutesDiff(time1, time2):
             if type(time1) in [long, int]:
                 time1 = str(time1)
@@ -159,7 +159,7 @@ class SandboxBot:
                    int(time2[6:8])) * 24 + int(time2[8:10])) * 60 + \
                    int(time2[10:12])
             return abs(t2-t1)
-
+ 
         mySite = self.site
         while True:
             wait = False
@@ -197,7 +197,7 @@ class SandboxBot:
                     else:
                         diff = minutesDiff(sandboxPage.editTime(), time.strftime("%Y%m%d%H%M%S", time.gmtime()))
                         if pywikibot.verbose:
-                            pywikibot.output(str((sandboxPage.editTime(), time.strftime("%Y%m%d%H%M%S", time.gmtime()))))
+                            print sandboxPage.editTime(), time.strftime("%Y%m%d%H%M%S", time.gmtime())
                         #Is the last edit more than 5 minutes ago?
                         if diff >= self.delay:
                             sandboxPage.put(translatedContent, translatedMsg)
@@ -214,35 +214,35 @@ class SandboxBot:
                 pywikibot.output(u'\nDone.')
                 return
             elif not wait:
-                if self.hours < 1.0:
-                    pywikibot.output('\nSleeping %s minutes, now %s' % ((self.hours*60), now) )
+                if self.minutes < 1.0:
+                    pywikibot.output('\nSleeping %s minutes, now %s' % ((self.minutes*60), now) )
                 else:
-                    pywikibot.output('\nSleeping %s hours, now %s' % (self.hours, now) )
-                time.sleep(self.hours * 60 * 60)
-
+                    pywikibot.output('\nSleeping %s minutes, now %s' % (self.minutes, now) )
+                time.sleep(self.minutes * 60)
+ 
 def main():
-    hours = 1
+    minutes = 1
     delay = None
     user  = False
     no_repeat = True
     for arg in pywikibot.handleArgs():
-        if arg.startswith('-hours:'):
-            hours = float(arg[7:])
+        if arg.startswith('-minutes:'):
+            minutes = float(arg[7:])
             no_repeat = False
         elif arg.startswith('-delay:'):
-            delay = int(arg[7:])
+            delay = float(arg[7:])
         elif arg == '-user':
             user  = True
         else:
             pywikibot.showHelp('clean_sandbox')
             return
-
-    bot = SandboxBot(hours, no_repeat, delay, user)
+ 
+    bot = SandboxBot(minutes, no_repeat, delay, user)
     try:
         bot.run()
     except KeyboardInterrupt:
         pywikibot.output('\nQuitting program...')
-
+ 
 if __name__ == "__main__":
     try:
         main()
