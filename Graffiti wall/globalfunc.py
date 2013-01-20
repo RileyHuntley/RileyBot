@@ -154,7 +154,9 @@ class SandboxBot:
             if self.site.lang not in user_sandboxTemplate:
                 sandboxTitle[self.site.lang] = []
                 pywikibot.output(u'Not properly set-up to run in user namespace!')
-                
+        self.site = pywikibot.getSite()
+        self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Graffiti wall/Stop')
+        
     def run(self):
 
         def minutesDiff(time1, time2):
@@ -229,9 +231,6 @@ class SandboxBot:
                 else:
                     pywikibot.output('\nSleeping %s hours, now %s' % (self.hours, now) )
                 time.sleep(self.hours * 60 * 60)
-    def __init__(self):
-        self.site = pywikibot.Site()
-        self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Graffiti wall/Stop')
             
     def check_run_page(self):
         text = self.stop_page.get(force=True)
