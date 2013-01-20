@@ -44,10 +44,18 @@ This script understands the following command-line arguments:
 #
 __version__ = '$Id: clean_sandbox.py 10930 2013-01-15 17:17:46Z drtrigon $'
 #
-
+from datetime import datetime
+import platform
 import time
+import sys
 import wikipedia as pywikibot
+import userlib
 from pywikibot import i18n
+
+import localconfig
+if platform.system() == "Windows":
+        sys.path.append(localconfig.winpath)
+else:sys.path.append(localconfig.linuxpath)
 
 content = {
     'commons': u'{{Sandbox}}\n<!-- Please edit only below this line. -->',
@@ -146,7 +154,23 @@ class SandboxBot:
             if self.site.lang not in user_sandboxTemplate:
                 sandboxTitle[self.site.lang] = []
                 pywikibot.output(u'Not properly set-up to run in user namespace!')
-
+    def startAllowed(override):
+        if override:return True
+        site = wikipedia.getSite()
+        pagename = localconfig.gopage
+        page = wikipedia.Page(site, pagename)
+        start = page.get()
+        if start == "Run":
+                return True
+        if start == "Dry run":
+                runDry()
+        if start == "Dry":
+                print "Notice - Running Graffiti.py only"
+                import checkwait #import as it's a py file
+                return False
+        else:
+                return False
+                
     def run(self):
 
         def minutesDiff(time1, time2):
