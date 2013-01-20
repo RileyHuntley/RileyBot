@@ -154,16 +154,6 @@ class SandboxBot:
             if self.site.lang not in user_sandboxTemplate:
                 sandboxTitle[self.site.lang] = []
                 pywikibot.output(u'Not properly set-up to run in user namespace!')
-    def startAllowed(override):
-        if override:return True
-        site = wikipedia.getSite()
-        pagename = localconfig.gopage
-        page = wikipedia.Page(site, pagename)
-        start = page.get()
-        if start == "Run":
-                return True
-        else:
-                return False
                 
     def run(self):
 
@@ -239,7 +229,15 @@ class SandboxBot:
                 else:
                     pywikibot.output('\nSleeping %s hours, now %s' % (self.hours, now) )
                 time.sleep(self.hours * 60 * 60)
-
+    def __init__(self):
+        self.site = pywikibot.Site()
+        self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Graffiti wall/Stop')
+            
+    def check_run_page(self):
+        text = self.stop_page.get(force=True)
+        if text.lower() != 'run':
+            raise Exception("Stop page disabled")
+            
 def main():
     hours = 1
     delay = None
@@ -259,6 +257,7 @@ def main():
 
     bot = SandboxBot(hours, no_repeat, delay, user)
     try:
+        self.check_run_page()
         bot.run()
     except KeyboardInterrupt:
         pywikibot.output('\nQuitting program...')
