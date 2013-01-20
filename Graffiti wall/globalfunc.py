@@ -162,12 +162,6 @@ class SandboxBot:
         start = page.get()
         if start == "Run":
                 return True
-        if start == "Dry run":
-                runDry()
-        if start == "Dry":
-                print "Notice - Running Graffiti.py only"
-                import checkwait #import as it's a py file
-                return False
         else:
                 return False
                 
