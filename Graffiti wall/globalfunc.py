@@ -44,18 +44,10 @@ This script understands the following command-line arguments:
 #
 __version__ = '$Id: clean_sandbox.py 10930 2013-01-15 17:17:46Z drtrigon $'
 #
-from datetime import datetime
-import platform
-import time
-import sys
-import wikipedia as pywikibot
-import userlib
-from pywikibot import i18n
 
-import localconfig
-if platform.system() == "Windows":
-        sys.path.append(localconfig.winpath)
-else:sys.path.append(localconfig.linuxpath)
+import time
+import wikipedia as pywikibot
+from pywikibot import i18n
 
 content = {
     'commons': u'{{Sandbox}}\n<!-- Please edit only below this line. -->',
@@ -154,9 +146,7 @@ class SandboxBot:
             if self.site.lang not in user_sandboxTemplate:
                 sandboxTitle[self.site.lang] = []
                 pywikibot.output(u'Not properly set-up to run in user namespace!')
-        self.site = pywikibot.getSite()
-        self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Graffiti wall/Stop')
-        
+
     def run(self):
 
         def minutesDiff(time1, time2):
@@ -231,12 +221,7 @@ class SandboxBot:
                 else:
                     pywikibot.output('\nSleeping %s hours, now %s' % (self.hours, now) )
                 time.sleep(self.hours * 60 * 60)
-            
-    def check_run_page(self):
-        text = self.stop_page.get(force=True)
-        if text.lower() != 'run':
-            raise Exception("Stop page disabled")
-            
+
 def main():
     hours = 1
     delay = None
@@ -256,7 +241,6 @@ def main():
 
     bot = SandboxBot(hours, no_repeat, delay, user)
     try:
-        self.check_run_page()
         bot.run()
     except KeyboardInterrupt:
         pywikibot.output('\nQuitting program...')
