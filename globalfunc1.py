@@ -58,7 +58,7 @@ content = {
     'cs': u'{{subst:/uhrabat}}',
     'da': u'{{subst:Sandkasse tekst}}',
     'de': u'{{Bitte erst NACH dieser Zeile schreiben! (Begrüßungskasten)}}\r\n',
-    'en': u'{{Wiktionary:Sandbox/Please do not edit this line}}\n<!-- Please edit BELOW this line -->',
+    'en': u'{{Wikipedia:Student tutorial/Nav bar}}\n{{Please try your changes below this line}}',
     'fa': u'{{subst:User:Amirobot/sandbox}}',
     'fi': u'{{subst:Hiekka}}',
     'he': u'{{ארגז חול}}\n<!-- נא לערוך מתחת לשורה זו בלבד, תודה. -->',
@@ -93,7 +93,7 @@ sandboxTitle = {
     'cs': u'Project:Pískoviště',
     'da': u'Project:Sandkassen',
     'de': u'Project:Spielwiese',
-    'en': u'Wiktionary:Sandbox',
+    'en': u'Wikipedia:Student tutorial',
     'fa': [u'Project:صفحه تمرین', u'Project:آشنایی با ویرایش'],
     'fi': u'Project:Hiekkalaatikko',
     'fr': u'Project:Bac à sable',
@@ -173,29 +173,29 @@ class SandboxBot:
                 titles = [localSandboxTitle,]
             for title in titles:
                 sandboxPage = pywikibot.Page(mySite, title)
-                pywikibot.output(u'Preparing to process sandbox page %s' % sandboxPage.title(asLink=True))
+                pywikibot.output(u'Preparing to process graffiti wall page %s' % sandboxPage.title(asLink=True))
                 try:
                     text = sandboxPage.get()
                     translatedContent = pywikibot.translate(mySite, content)
                     translatedMsg = i18n.twtranslate(mySite,
-                                                     'clean_sandbox-cleaned')
+                                                     'globalfunc-cleaned')
                     subst = 'subst:' in translatedContent
                     pos = text.find(translatedContent.strip())
                     if text.strip() == translatedContent.strip():
-                        pywikibot.output(u'The sandbox is still clean, no change necessary.')
+                        pywikibot.output(u'The graffiti wall is still clean, no change necessary.')
                     elif subst and sandboxPage.userName() == mySite.loggedInAs():
-                        pywikibot.output(u'The sandbox might be clean, no change necessary.')
+                        pywikibot.output(u'The graffiti wall might be clean, no change necessary.')
                     elif pos <> 0 and not subst:
                         if self.user:
                             endpos = pos + len(translatedContent.strip())
                             if (pos < 0) or (endpos == len(text)):
-                                pywikibot.output(u'The user sandbox is still clean, no change necessary.')
+                                pywikibot.output(u'The user graffiti wall is still clean, no change necessary.')
                             else:
                                 sandboxPage.put(text[:endpos], translatedMsg)
-                                pywikibot.output(u'Standard content was changed, user sandbox cleaned.')
+                                pywikibot.output(u'Standard content was changed, user graffiti wall cleaned.')
                         else:
                             sandboxPage.put(translatedContent, translatedMsg)
-                            pywikibot.output(u'Standard content was changed, sandbox cleaned.')
+                            pywikibot.output(u'Standard content was changed, graffiti wall cleaned.')
                     else:
                         diff = minutesDiff(sandboxPage.editTime(), time.strftime("%Y%m%d%H%M%S", time.gmtime()))
                         if pywikibot.verbose:
@@ -210,7 +210,7 @@ class SandboxBot:
                 except pywikibot.EditConflict:
                     pywikibot.output(u'*** Loading again because of edit conflict.\n')
                 except pywikibot.NoPage:
-                    pywikibot.output(u'*** The sandbox is not existent, skipping.')
+                    pywikibot.output(u'*** The graffiti wall is not existent, skipping.')
                     continue
             if self.no_repeat:
                 pywikibot.output(u'\nDone.')
