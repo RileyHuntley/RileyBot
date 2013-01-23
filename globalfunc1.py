@@ -33,8 +33,6 @@ This script understands the following command-line arguments:
 # (C) Siebrand Mazeland, 2007
 # (C) xqt, 2009-2013
 # (C) Dr. Trigon, 2011-2012
-# (C) DeltaQuad, 2013-2013
-# (C) Riley Huntley, 2013-2013
 #
 # DrTrigonBot: http://de.wikipedia.org/wiki/Benutzer:DrTrigonBot
 # Clean User Sandbox Robot (clean_user_sandbox.py)
@@ -42,7 +40,7 @@ This script understands the following command-line arguments:
 #
 # Distributed under the terms of the MIT license.
 #
-__version__ = '$Id: clean_sandbox.py 10930 2013-01-15 17:17:46Z drtrigon $'
+__version__ = '$Id$'
 #
 
 import time
@@ -52,71 +50,71 @@ from pywikibot import i18n
 content = {
     'commons': u'{{Sandbox}}\n<!-- Please edit only below this line. -->',
     'als':u'{{subst:/Vorlage}}',
-    'ar': u'{{عنوان الملعب}}\n<!-- مرحبا! خذ راحتك في تجربة مهارتك في التنسيق والتحرير أسفل هذا السطر. هذه الصفحة لتجارب التعديل ، سيتم تفريغ هذه الصفحة كل 12 ساعة. -->',
-    'az': u'<!--- LÜTFƏN, BU SƏTRƏ TOXUNMAYIN --->\n{{Qaralama dəftəri}}\n<!-- AŞAĞIDAKI XƏTTİN ALTINDAN YAZA BİLƏRSİNİZ --->',
-    'bar':u'{{Bitte erst NACH dieser Zeile schreiben! (Begrüßungskasten)}}\r\n',
+    'ar': u'{{Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ù„Ø¹Ø¨}}\n<!-- Ù…Ø±Ø­Ø¨Ø§! Ø®Ø° Ø±Ø§Ø­ØªÙƒ ÙÙŠ ØªØ¬Ø±Ø¨Ø© Ù…Ù‡Ø§Ø±ØªÙƒ ÙÙŠ Ø§Ù„ØªÙ†Ø³ÙŠÙ‚ ÙˆØ§Ù„ØªØ­Ø±ÙŠØ± Ø£Ø³ÙÙ„ Ù‡Ø°Ø§ Ø§Ù„Ø³Ø·Ø±. Ù‡Ø°Ù‡ Ø§Ù„ØµÙØ­Ø© Ù„ØªØ¬Ø§Ø±Ø¨ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„ ØŒ Ø³ÙŠØªÙ… ØªÙØ±ÙŠØº Ù‡Ø°Ù‡ Ø§Ù„ØµÙØ­Ø© ÙƒÙ„ 12 Ø³Ø§Ø¹Ø©. -->',
+    'az': u'<!--- LÃœTFÆN, BU SÆTRÆ TOXUNMAYIN --->\n{{Qaralama dÉ™ftÉ™ri}}\n<!-- AÅžAÄžIDAKI XÆTTÄ°N ALTINDAN YAZA BÄ°LÆRSÄ°NÄ°Z --->',
+    'bar':u'{{Bitte erst NACH dieser Zeile schreiben! (BegrÃ¼ÃŸungskasten)}}\r\n',
     'cs': u'{{subst:/uhrabat}}',
     'da': u'{{subst:Sandkasse tekst}}',
-    'de': u'{{Bitte erst NACH dieser Zeile schreiben! (Begrüßungskasten)}}\r\n',
-    'en': u'{{Wikipedia:Student tutorial/Nav bar}}\n{{Please try your changes below this line}}',
+    'de': u'{{Bitte erst NACH dieser Zeile schreiben! (BegrÃ¼ÃŸungskasten)}}\r\n',
+    'en': u'{{Sandbox heading}}\n<!-- Hello! Feel free to try your formatting and editing skills below this line. As this page is for editing experiments, this page will automatically be cleaned every 12 hours. -->',
     'fa': u'{{subst:User:Amirobot/sandbox}}',
     'fi': u'{{subst:Hiekka}}',
-    'he': u'{{ארגז חול}}\n<!-- נא לערוך מתחת לשורה זו בלבד, תודה. -->',
+    'he': u'{{××¨×’×– ×—×•×œ}}\n<!-- × × ×œ×¢×¨×•×š ×ž×ª×—×ª ×œ×©×•×¨×” ×–×• ×‘×œ×‘×“, ×ª×•×“×”. -->',
     'id': u'{{Bakpasir}}\n<!-- Uji coba dilakukan di baris di bawah ini -->',
     'it': u'{{sandbox}}<!-- Scrivi SOTTO questa riga senza cancellarla. Grazie. -->',
-    'ja': u'{{subst:サンドボックス}}',
-    'ko': u'{{연습장 안내문}}',
+    'ja': u'{{subst:ã‚µãƒ³ãƒ‰ãƒœãƒƒã‚¯ã‚¹}}',
+    'ko': u'{{ì—°ìŠµìž¥ ì•ˆë‚´ë¬¸}}',
     'ksh':u'{{subst:/Schablon}}',
-    'mzn':u'{{ویکی‌پدیا:چنگ‌مویی صفحه/پیغوم}}\n<!-- سلام!اگه خواننی شه دچی‌ین مهارتون وسه تمرین هاکنین بتوننی اینتا صفحه جا ایستفاده هاکنین، اته لطف هاکنین اینتا پیغوم ره شه بقیه رفقون وسه بیلین. اینتا صفحه هرچند ساعت ربوت جا پاک بونه.-->',
-    'nds':u'{{subst:/Vörlaag}}',
+    'mzn':u'{{ÙˆÛŒÚ©ÛŒâ€ŒÙ¾Ø¯ÛŒØ§:Ú†Ù†Ú¯â€ŒÙ…ÙˆÛŒÛŒ ØµÙØ­Ù‡/Ù¾ÛŒØºÙˆÙ…}}\n<!-- Ø³Ù„Ø§Ù…!Ø§Ú¯Ù‡ Ø®ÙˆØ§Ù†Ù†ÛŒ Ø´Ù‡ Ø¯Ú†ÛŒâ€ŒÛŒÙ† Ù…Ù‡Ø§Ø±ØªÙˆÙ† ÙˆØ³Ù‡ ØªÙ…Ø±ÛŒÙ† Ù‡Ø§Ú©Ù†ÛŒÙ† Ø¨ØªÙˆÙ†Ù†ÛŒ Ø§ÛŒÙ†ØªØ§ ØµÙØ­Ù‡ Ø¬Ø§ Ø§ÛŒØ³ØªÙØ§Ø¯Ù‡ Ù‡Ø§Ú©Ù†ÛŒÙ†ØŒ Ø§ØªÙ‡ Ù„Ø·Ù Ù‡Ø§Ú©Ù†ÛŒÙ† Ø§ÛŒÙ†ØªØ§ Ù¾ÛŒØºÙˆÙ… Ø±Ù‡ Ø´Ù‡ Ø¨Ù‚ÛŒÙ‡ Ø±ÙÙ‚ÙˆÙ† ÙˆØ³Ù‡ Ø¨ÛŒÙ„ÛŒÙ†. Ø§ÛŒÙ†ØªØ§ ØµÙØ­Ù‡ Ù‡Ø±Ú†Ù†Ø¯ Ø³Ø§Ø¹Øª Ø±Ø¨ÙˆØª Ø¬Ø§ Ù¾Ø§Ú© Ø¨ÙˆÙ†Ù‡.-->',
+    'nds':u'{{subst:/VÃ¶rlaag}}',
     'nl': u'{{subst:Wikipedia:Zandbak/schoon zand}}',
-    'nn': u'{{sandkasse}}\n<!-- Ver snill og IKKJE FJERN DENNE LINA OG LINA OVER ({{sandkasse}}) Nedanføre kan du derimot ha det artig og prøve deg fram! Lykke til! :-)  -->',
+    'nn': u'{{sandkasse}}\n<!-- Ver snill og IKKJE FJERN DENNE LINA OG LINA OVER ({{sandkasse}}) NedanfÃ¸re kan du derimot ha det artig og prÃ¸ve deg fram! Lykke til! :-)  -->',
     'no': u'{{Sandkasse}}\n<!-- VENNLIGST EKSPERIMENTER NEDENFOR DENNE SKJULTE TEKSTLINJEN! SANDKASSEMALEN {{Sandkasse}} SKAL IKKE FJERNES! -->}}',
-    'pl': u'{{Prosimy - NIE ZMIENIAJ, NIE KASUJ, NIE PRZENOŚ tej linijki - pisz niżej}}',
-    'pt': u'<!--não apague esta linha-->{{página de testes}}<!--não apagar-->\r\n',
-    'ru': u'{{/Пишите ниже}}\n<!-- Не удаляйте, пожалуйста, эту строку, тестируйте ниже -->',
+    'pl': u'{{Prosimy - NIE ZMIENIAJ, NIE KASUJ, NIE PRZENOÅš tej linijki - pisz niÅ¼ej}}',
+    'pt': u'<!--nÃ£o apague esta linha-->{{pÃ¡gina de testes}}<!--nÃ£o apagar-->\r\n',
+    'ru': u'{{/ÐŸÐ¸ÑˆÐ¸Ñ‚Ðµ Ð½Ð¸Ð¶Ðµ}}\n<!-- ÐÐµ ÑƒÐ´Ð°Ð»ÑÐ¹Ñ‚Ðµ, Ð¿Ð¾Ð¶Ð°Ð»ÑƒÐ¹ÑÑ‚Ð°, ÑÑ‚Ñƒ ÑÑ‚Ñ€Ð¾ÐºÑƒ, Ñ‚ÐµÑÑ‚Ð¸Ñ€ÑƒÐ¹Ñ‚Ðµ Ð½Ð¸Ð¶Ðµ -->',
     'simple': u'{{subst:/Text}}',
     'sco': u'Feel free tae test here',
-    'sr': u'{{песак}}\n<!-- Молимо, испробавајте испод ове линије. Хвала. -->',
-    'sv': u'{{subst:Sandlådan}}',
-    'th': u'{{กระบะทราย}}\n<!-- กรุณาอย่าแก้ไขบรรทัดนี้ ขอบคุณครับ/ค่ะ -- Please leave this line as they are. Thank you! -->',
-    'tr': u'{{/Bu satırı değiştirmeden bırakın}}',
+    'sr': u'{{Ð¿ÐµÑÐ°Ðº}}\n<!-- ÐœÐ¾Ð»Ð¸Ð¼Ð¾, Ð¸ÑÐ¿Ñ€Ð¾Ð±Ð°Ð²Ð°Ñ˜Ñ‚Ðµ Ð¸ÑÐ¿Ð¾Ð´ Ð¾Ð²Ðµ Ð»Ð¸Ð½Ð¸Ñ˜Ðµ. Ð¥Ð²Ð°Ð»Ð°. -->',
+    'sv': u'{{subst:SandlÃ¥dan}}',
+    'th': u'{{à¸à¸£à¸°à¸šà¸°à¸—à¸£à¸²à¸¢}}\n<!-- à¸à¸£à¸¸à¸“à¸²à¸­à¸¢à¹ˆà¸²à¹à¸à¹‰à¹„à¸‚à¸šà¸£à¸£à¸—à¸±à¸”à¸™à¸µà¹‰ à¸‚à¸­à¸šà¸„à¸¸à¸“à¸„à¸£à¸±à¸š/à¸„à¹ˆà¸° -- Please leave this line as they are. Thank you! -->',
+    'tr': u'{{/Bu satÄ±rÄ± deÄŸiÅŸtirmeden bÄ±rakÄ±n}}',
     'zh': u'{{subst:User:Sz-iwbot/sandbox}}\r\n',
     }
 
 sandboxTitle = {
     'commons': u'Project:Sandbox',
     'als':u'Project:Sandchaschte',
-    'ar': u'Project:ملعب',
-    'az': u'Vikipediya:Qaralama dəftəri',
+    'ar': u'Project:Ù…Ù„Ø¹Ø¨',
+    'az': u'Vikipediya:Qaralama dÉ™ftÉ™ri',
     'bar':u'Project:Spuiwiesn',
-    'cs': u'Project:Pískoviště',
+    'cs': u'Project:PÃ­skoviÅ¡tÄ›',
     'da': u'Project:Sandkassen',
     'de': u'Project:Spielwiese',
-    'en': u'Wikipedia:Student tutorial',
-    'fa': [u'Project:صفحه تمرین', u'Project:آشنایی با ویرایش'],
+    'en': u'Project:Sandbox',
+    'fa': [u'Project:ØµÙØ­Ù‡ ØªÙ…Ø±ÛŒÙ†', u'Project:Ø¢Ø´Ù†Ø§ÛŒÛŒ Ø¨Ø§ ÙˆÛŒØ±Ø§ÛŒØ´'],
     'fi': u'Project:Hiekkalaatikko',
-    'fr': u'Project:Bac à sable',
-    'he': u'Project:ארגז חול',
+    'fr': u'Project:Bac Ã  sable',
+    'he': u'Project:××¨×’×– ×—×•×œ',
     'id': u'Project:Bak pasir',
     'it': u'Project:Pagina delle prove',
-    'ja': u'Project:サンドボックス',
-    'ko': u'Project:연습장',
+    'ja': u'Project:ã‚µãƒ³ãƒ‰ãƒœãƒƒã‚¯ã‚¹',
+    'ko': u'Project:ì—°ìŠµìž¥',
     'ksh':u'Project:Shpillplaz',
-    'mzn':u'Project:چنگ‌مویی صفحه',
+    'mzn':u'Project:Ú†Ù†Ú¯â€ŒÙ…ÙˆÛŒÛŒ ØµÙØ­Ù‡',
     'nds':u'Project:Speelwisch',
     'nl': u'Project:Zandbak',
     'no': u'Project:Sandkasse',
     'pl': u'Project:Brudnopis',
-    'pt': u'Project:Página de testes',
-    'ru': u'Project:Песочница',
+    'pt': u'Project:PÃ¡gina de testes',
+    'ru': u'Project:ÐŸÐµÑÐ¾Ñ‡Ð½Ð¸Ñ†Ð°',
     'simple': u'Project:Sandbox',
     'sco': u'Project:Saundpit',
-    'sr': u'Project:Песак',
-    'sv': u'Project:Sandlådan',
-    'th': u'Project:ทดลองเขียน',
-    'tr': u'Vikipedi:Deneme tahtası',
-    'zh': u'Project:沙盒',
+    'sr': u'Project:ÐŸÐµÑÐ°Ðº',
+    'sv': u'Project:SandlÃ¥dan',
+    'th': u'Project:à¸—à¸”à¸¥à¸­à¸‡à¹€à¸‚à¸µà¸¢à¸™',
+    'tr': u'Vikipedi:Deneme tahtasÄ±',
+    'zh': u'Project:æ²™ç›’',
     }
 
 user_content = {
@@ -173,29 +171,29 @@ class SandboxBot:
                 titles = [localSandboxTitle,]
             for title in titles:
                 sandboxPage = pywikibot.Page(mySite, title)
-                pywikibot.output(u'Preparing to process graffiti wall page %s' % sandboxPage.title(asLink=True))
+                pywikibot.output(u'Preparing to process sandbox page %s' % sandboxPage.title(asLink=True))
                 try:
                     text = sandboxPage.get()
                     translatedContent = pywikibot.translate(mySite, content)
                     translatedMsg = i18n.twtranslate(mySite,
-                                                     'globalfunc-cleaned')
+                                                     'clean_sandbox-cleaned')
                     subst = 'subst:' in translatedContent
                     pos = text.find(translatedContent.strip())
                     if text.strip() == translatedContent.strip():
-                        pywikibot.output(u'The graffiti wall is still clean, no change necessary.')
+                        pywikibot.output(u'The sandbox is still clean, no change necessary.')
                     elif subst and sandboxPage.userName() == mySite.loggedInAs():
-                        pywikibot.output(u'The graffiti wall might be clean, no change necessary.')
+                        pywikibot.output(u'The sandbox might be clean, no change necessary.')
                     elif pos <> 0 and not subst:
                         if self.user:
                             endpos = pos + len(translatedContent.strip())
                             if (pos < 0) or (endpos == len(text)):
-                                pywikibot.output(u'The user graffiti wall is still clean, no change necessary.')
+                                pywikibot.output(u'The user sandbox is still clean, no change necessary.')
                             else:
                                 sandboxPage.put(text[:endpos], translatedMsg)
-                                pywikibot.output(u'Standard content was changed, user graffiti wall cleaned.')
+                                pywikibot.output(u'Standard content was changed, user sandbox cleaned.')
                         else:
                             sandboxPage.put(translatedContent, translatedMsg)
-                            pywikibot.output(u'Standard content was changed, graffiti wall cleaned.')
+                            pywikibot.output(u'Standard content was changed, sandbox cleaned.')
                     else:
                         diff = minutesDiff(sandboxPage.editTime(), time.strftime("%Y%m%d%H%M%S", time.gmtime()))
                         if pywikibot.verbose:
@@ -210,7 +208,7 @@ class SandboxBot:
                 except pywikibot.EditConflict:
                     pywikibot.output(u'*** Loading again because of edit conflict.\n')
                 except pywikibot.NoPage:
-                    pywikibot.output(u'*** The graffiti wall is not existent, skipping.')
+                    pywikibot.output(u'*** The sandbox is not existent, skipping.')
                     continue
             if self.no_repeat:
                 pywikibot.output(u'\nDone.')
@@ -232,7 +230,7 @@ def main():
             hours = float(arg[7:])
             no_repeat = False
         elif arg.startswith('-delay:'):
-            delay = float(arg[7:])
+            delay = int(arg[7:])
         elif arg == '-user':
             user  = True
         else:
