@@ -3,7 +3,7 @@
 # Please wirte your feedback to [[User_talk:OsamaK]].
 
 # This script updates Alexa rankings depending on a list on
-# [[User:OsamaK/AlexaBot.js]]. The syntax of the list is:
+# [[User:Riley_Huntley/AlexaBot.js]]. The syntax of the list is:
 #     "Example (website) example.com"
 # It could optionally include the "local" flag to fetch the local
 # Alexa ranking (the one beside the 'Global ranking'):
@@ -29,7 +29,7 @@ class alexaBot:
 
     def get_article_list(self):
         list_regex = '"(.+)" ([^ \n]+)[ ]?(local)?'
-        list_page = wikipedia.Page(self.site,'User:OsamaK/AlexaBot.js').get()
+        list_page = wikipedia.Page(self.site,'User:Riley_Huntley/AlexaBot.js').get()
         #list_page = open('alexa_ranking.list').read() # Alternative list source.
 
         articles_list = re.findall(list_regex, list_page)
@@ -168,7 +168,7 @@ class alexaBot:
                                 "{{cite web|url= %(url)s |title= %(title)s " \
                                 "| publisher= [[Alexa Internet]] " \
                                 "|accessdate= %(year)d-%(month)02d-%(day)02d }}</ref>" \
-                                "<!--Updated monthly by OKBot.-->" % \
+                                "<!--Updated monthly by RileyBot.-->" % \
                              {"ranking_text": ranking_text, "title": alexa_title,
                               "url": alexa_url, "year": self.now.year,
                               "month": self.now.month, "day": self.now.day,
