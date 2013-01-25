@@ -96,10 +96,10 @@ class alexaBot:
     def save_article(self, article_object, article_text, article_url,
                        old_alexa_field, new_alexa_field, new_ranking):
         article_text = article_text.replace(old_alexa_field, new_alexa_field)
-        edit_summery = "Bot trial: Updating Alexa ranking ([[User talk:" \
+        edit_summary = "Bot trial: Updating Alexa ranking ([[User talk:" \
                    "Riley Huntley/AlexaBot.js|Help get more pages covered]])"
 
-        article_object.put(article_text, comment=edit_summery)
+        article_object.put(article_text, comment=edit_summary)
 
         time.sleep(10)
         self.database[article_url] = new_ranking
