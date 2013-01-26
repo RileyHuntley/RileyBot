@@ -359,7 +359,7 @@ class RedirectRobot:
         self.always = always
         self.number = number
         self.exiting = False
-        self.logpage = pywikibot.Page(self.site, 'User:RileyBot/Broken Redirects')
+        self.logpage = pywikibot.Page(self.site, 'User:Legobot/Broken Redirects')
         self.logtext = ''
         self.DONT_DELETE_NAMESPACES = [2,3]
 
@@ -379,7 +379,7 @@ class RedirectRobot:
 
     def delete_broken_redirects(self):
         # get reason for deletion text
-        reason = 'Redirect to a deleted or non-existent page'
+        reason = 'Robot: Redirect to a deleted or non-existent page'
         #for redir_name in self.generator.retrieve_broken_redirects():
         for redir_name in self.generator:
             self.delete_1_broken_redirect(redir_name, reason)
@@ -389,7 +389,7 @@ class RedirectRobot:
     def update_log(self):
         if self.logpage.exists():
             self.logtext = self.logpage.get() + '\n==~~~~~==\n' + self.logtext
-        self.logpage.put(self.logtext, 'Updating list of articles tagged for speedy deletion')
+        self.logpage.put(self.logtext, 'Robot: Updating list of articles tagged for speedy deletion')
 
     def delete_1_broken_redirect(self, redir_page, reason):
         #redir_page = pywikibot.Page(self.site, redir_name)
@@ -412,7 +412,7 @@ class RedirectRobot:
             except pywikibot.NoPage:
                 pywikibot.output(u"Putting page to speedy deletion.")
                 content = redir_page.get(get_redirect=True)
-                content = '{{db-redirnonebot|bot=RileyBot}}' + "\n" + content
+                content = '{{db-redirnonebot|bot=Legobot}}' + "\n" + content
                 try:
                     redir_page.put(content, reason)
                 except pywikibot.exceptions.LockedPage:
