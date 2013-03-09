@@ -25,7 +25,7 @@ import wikipedia as pywikibot
 
 class RileyBot():
     def __init__(self):
-        self.site = pywikibot.Site()
+        self.site = pywikibot.getSite()
         self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Stop')
 
     def check_run_page(self):
@@ -33,7 +33,7 @@ class RileyBot():
         if text.lower() != 'run':
             raise Exception("Stop page disabled")
   def run(self):
-		page = wikipedia.Page(site, u"User:RileyBot/Test")
+	page = wikipedia.Page(site, u"User:RileyBot/Test")
         self.do_page(page)		
 		
 	def do_page(self, page):
