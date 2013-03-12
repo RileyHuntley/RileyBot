@@ -359,7 +359,7 @@ class RedirectRobot:
         self.always = always
         self.number = number
         self.exiting = False
-        self.logpage = pywikibot.Page(self.site, 'User:Legobot/Broken Redirects')
+        self.logpage = pywikibot.Page(self.site, 'User:RileyBot/Broken Redirects')
         self.logtext = ''
         self.DONT_DELETE_NAMESPACES = [2,3]
 
