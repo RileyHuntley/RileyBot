@@ -27,17 +27,21 @@ def log(title_1):
     f.write(old+msg)
     f.close()
 	
-class ProdBot(robot.Robot):	
-
+class ProdBot(robot.Robot):
+	
+	def run(self):
+	
 	def __init__(self):
         robot.Robot.__init__(self, task=10)
         self.reason = '[[User:RileyBot|Bot]] trial: Nominating %s for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
 	robot.Robot.self.trial = True
 	robot.Robot.self.trial_max = 20
-	robot.Robot.self.CONFIGURATION_PAGE = CONFIGURATION_PAGE % self.username
-	robot.Robot.self.CHECK_CONFIG_PAGE_EVERY = CHECK_CONFIG_PAGE_EVERY
-	self.startLogging(pywikibot.Page(self.site, 'User:RileyBot/Task10/Log'))
-		
+	self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Stop/10')
+	self.startLogging(pywikibot.Page(self.site, 'User:RileyBot/Logs/10'))
+	def check_page(self):
+		text = self.stop_page.get(force=True)
+        if text.lower() != 'run':
+            raise Exception("Stop page disabled")	
 	def do_page(self, page):	
         	title_1 = page.title()
 		if page.isRedirectPage():
@@ -48,6 +52,7 @@ class ProdBot(robot.Robot):
 		if pywikibot.NoPage():
 			self.output('Page %s does not exist; skipping'  % page.title())
 		newtext = '{{subst:Proposed deletion|%s}}\n' % (reason) + newtext
+		self.check_page()
 		if text != page.get():
 			pywikibot.output(u"\n\n>>> \03{lightpurple}%s\03{default} <<<"
 		                % page.title())
@@ -60,7 +65,7 @@ class ProdBot(robot.Robot):
                     pywikibot.output(
                         u'Skipping %s because of edit conflict'
                         % (page.title()))
-
+	
 	def warn_user(self, page2)
 		warn_title = pywikibot.Page(wiki, 'User talk:'+creator)
 		if page.isRedirectPage():
@@ -71,6 +76,7 @@ class ProdBot(robot.Robot):
 		warn_text = warn_template % (title_1, reason)
 		warn_text = warn_text.encode('utf-8')
 		warn_page = pywikibot.Page(wiki, warn_title)
+		self.check_page()
 		warn_page.edit(warn_text, section="new", sectiontitle="== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==", summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (warn_title, warn_title)
 		print warn_text
 if __name__ == "__main__":
