@@ -3,7 +3,7 @@ import pywikibot
 import robot
 
 ##VARIABLES##
-creator = getCreator() 
+creator = page.getCreator() 
 reason = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
 warn_template = u'{{subst:Proposed deletion notify|%s|concern=%s}} ~~~~'
 
@@ -64,7 +64,7 @@ class ProdBot(robot.Robot):
         return False
 		
 	def warn_user(self, page2)
-		warn_title = wikitools.Page(wiki, 'User talk:'+creator)
+		warn_title = pywikibot.Page(wiki, 'User talk:'+creator)
 		if page.isRedirectPage():
             		self.output('Page %s is a redirect; skipping.' % page.title())
 		if pywikibot.NoPage():
@@ -72,7 +72,7 @@ class ProdBot(robot.Robot):
             		return
 		warn_text = warn_template % (title_1, reason)
 		warn_text = warn_text.encode('utf-8')
-		warn_page = wikitools.Page(wiki, warn_title)
+		warn_page = pywikibot.Page(wiki, warn_title)
 		warn_page.edit(warn_text, section="new", sectiontitle="== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==", summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (warn_title, warn_title)
 		print warn_text
 if __name__ == "__main__":
