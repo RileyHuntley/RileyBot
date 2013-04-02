@@ -44,7 +44,7 @@ class ProdBot(robot.Robot):
 			pywikibot.output(u"\n\n>>> \03{lightpurple}%s\03{default} <<<"
 		                % page.title())
             	pywikibot.showDiff(text, newtext)
-                    page.put(text, comment=comment or self.comment, **kwargs)
+                    page.put(text, comment=comment or self.comment, watchArticle = True, minorEdit = True, **kwargs)
                 if pywikibot.LockedPage:
                     pywikibot.output(u"Page %s is locked; skipping."
                                      % page.title(asLink=True))
@@ -53,6 +53,22 @@ class ProdBot(robot.Robot):
                         u'Skipping %s because of edit conflict'
                         % (page.title()))
 		
+		
+		
+		
+regex_skip = """\{\{(Template:)?([Pp]ROD
+|[Pp]roD
+|[Pp]rod
+|[Pp]roposal to delete)"""
+regex_skip = regex_skip.replace('\n', '')
+REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
+
+
+def clean(box):
+    text = box.get()
+    if not REGEX.findall(text):
+        newtext = HEADER + text
+        box.put(newtext, "Robot: Reinserting sandbox header")
 	def warn_user(self, page2)
 		warn_title = pywikibot.Page(wiki, 'User talk:'+creator)
 		if page.isRedirectPage():
