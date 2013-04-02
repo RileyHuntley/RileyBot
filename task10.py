@@ -6,6 +6,13 @@ import robot
 creator = page.getCreator() 
 reason = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
 warn_template = u'{{subst:Proposed deletion notify|%s|concern=%s}} ~~~~'
+##REGEX##
+regex_skip = """\{\{(Template:)?([Pp]ROD
+|[Pp]roD
+|[Pp]rod
+|[Pp]roposal to delete)"""
+regex_skip = regex_skip.replace('\n', '')
+REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
 
 def log(title_1):
     LOGFILE = 'Task10.log'
@@ -37,6 +44,7 @@ class ProdBot(robot.Robot):
             		self.output('Page %s is a redirect; skipping.' % page.title())
             		return
 		newtext = text = page.get()
+		if not REGEX.findall(text):
 		if pywikibot.NoPage():
 			self.output('Page %s does not exist; skipping'  % page.title())
 		newtext = '{{subst:Proposed deletion|%s}}\n' % (reason) + newtext
@@ -52,23 +60,7 @@ class ProdBot(robot.Robot):
                     pywikibot.output(
                         u'Skipping %s because of edit conflict'
                         % (page.title()))
-		
-		
-		
-		
-regex_skip = """\{\{(Template:)?([Pp]ROD
-|[Pp]roD
-|[Pp]rod
-|[Pp]roposal to delete)"""
-regex_skip = regex_skip.replace('\n', '')
-REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
 
-
-def clean(box):
-    text = box.get()
-    if not REGEX.findall(text):
-        newtext = HEADER + text
-        box.put(newtext, "Robot: Reinserting sandbox header")
 	def warn_user(self, page2)
 		warn_title = pywikibot.Page(wiki, 'User talk:'+creator)
 		if page.isRedirectPage():
