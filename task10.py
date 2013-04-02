@@ -6,6 +6,14 @@ import robot
 creator = page.getCreator() 
 reason = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
 warn_template = u'{{subst:Proposed deletion notify|%s|concern=%s}} ~~~~'
+# Acceptall
+self.acceptall = acceptall
+    # will become True when the user presses a ('yes to all') or uses the
+    # -always flag.
+    acceptall = False
+    for arg in pywikibot.handleArgs(*args):
+	if arg == '-always':
+		acceptall = True
 
 def log(title_1):
     LOGFILE = 'Task10.log'
@@ -48,6 +56,8 @@ class ProdBot(robot.Robot):
             choice = pywikibot.inputChoice(
                 u'Do you want to accept these changes?',
                 ['Yes', 'No'], ['y', 'N'], 'N')
+            if self.acceptall:
+		break
             if choice == 'y':
                 try:
                     # Save the page
