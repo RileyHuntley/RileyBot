@@ -99,7 +99,7 @@ class ProdRobot(robot.Robot):
         ## Double check ##
         self.check_page()
         ###MIGHT WORK NOW
-        warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==" + warn_template, summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (title_1, title_1, title_1)
+        warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==" + "\n" + warn_template, summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (title_1, title_1, title_1)
         print warn_text
     def teh_log(self): #naming conflict
         ## See line 10 for the log page ##
