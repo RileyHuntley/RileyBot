@@ -17,16 +17,19 @@ regex_skip = regex_skip.replace('\n', '')
 REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
 
 class ProdBot(robot.Robot):
-	
-	def run(self):
-	## Place here how you get the pages from the text file ##
 	def __init__(self):
         robot.Robot.__init__(self, task=10)
+        self.site = pywikibot.getSite()
+        self.page_with_links = pywikibot.Page(self.site, 'User:Kleinzach/Dips') ##NEED TO ATTACH THIS TO title_1
         self.reason = '[[User:RileyBot|Bot]] trial: Nominating %s for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
 	## Does this even work? ##
 	robot.Robot.self.trial = True
 	robot.Robot.self.trial_max = 20
 	
+	def list_of_pages(self):
+        gen = self.page_with_links.linkedPages(namespaces=0) ##NEED TO ATTACH THIS TO title_1
+        return gen
+        
 	## Check page; [[User:RileyBot/Stop/10]] ##
 	def check_page(self):
 		text = self.stop_page.get(force=True)
@@ -80,6 +83,10 @@ class ProdBot(robot.Robot):
 		log_content = log.get(get_redirect = True)
 		log_content = log_content + "\n" + "# [[:" + title_1 + "]]:" + reason + "{{subst:#time: r|now}}"
 		log.put(log_content, "[[User:RileyBot|Bot]]: Logging [[WP:proposed deletion|proposed deletion]] nomination of [[" + title_1 + "]].) ([[User:RileyBot/10|Task 10]]")
+	
+	def run(self):
+	generator = self.list_of_pages()
+	
 if __name__ == "__main__":
     bot = ProdRobot()
     bot.run()
