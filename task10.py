@@ -34,7 +34,8 @@ warn_template = u'{{subst:Proposed deletion notify|%s|concern=Non-notable diplom
 regex_skip = """\{\{(Template:)?([Pp]ROD
 |[Pp]roD
 |[Pp]rod
-|[Pp]roposal to delete)"""
+|[Pp]roposal to delete
+|[Pp]roposed deletion)"""
 regex_skip = regex_skip.replace('\n', '')
 REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
 
@@ -42,7 +43,7 @@ class ProdRobot(robot.Robot):
     def __init__(self):
         robot.Robot.__init__(self, task=10)
         self.site = pywikibot.getSite()
-        self.page_with_links = pywikibot.Page(self.site, 'User:Kleinzach/Dips') ##NEED TO ATTACH THIS TO title_1
+        self.page_with_links = pywikibot.Page(self.site, 'User:Riley_Huntley/Sandbox') ### [[User:Kleinzach/Dips]] ###
         self.reason = '[[User:RileyBot|Bot]] trial: Nominating %s for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
         ## Does this even work? ##
         self.trial = True
@@ -51,9 +52,8 @@ class ProdRobot(robot.Robot):
         self.log = pywikibot.Page(self.site, 'User:RileyBot/Logs/10')
 
     def list_of_pages(self):
-        return self.page_with_links.linkedPages(namespaces=0) ##NEED TO ATTACH THIS TO title_1
+        return self.page_with_links.linkedPages(namespaces=0) 
 
-    ## Check page; [[User:RileyBot/Stop/10]] ##
     def check_page(self):
         text = self.stop_page.get(force=True)
         if text.lower() != 'run':
@@ -61,12 +61,12 @@ class ProdRobot(robot.Robot):
             log_contentError = log_contentError + "\n\n" + "# [[:User:RileyBot/Stop/10]]: '''Error: Stop page disabled.''' {{subst:#time: r|now}}" + "\n"
             self.log.put(log_contentError, "[[User:RileyBot|Bot]]: Logging error; Stop page disabled.) ([[User:RileyBot/10|Task 10]]")
             raise Exception("Stop page disabled")
+
     def do_page(self, page):
         title_1 = page.title()
         if page.isRedirectPage():
             self.output('Page %s is a redirect; skipping.' % page.title())
             return
-
         newtext = text = page.get()
         if not REGEX.findall(text):
             if not page.exists():
@@ -89,7 +89,6 @@ class ProdRobot(robot.Robot):
         creator = page.getCreator()
         self.warn_user(creator, page)
 
-
     def warn_user(self, creator, page):
         warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
         if page.isRedirectPage():
@@ -101,9 +100,9 @@ class ProdRobot(robot.Robot):
         ###MIGHT WORK NOW
         warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==" + "\n" + warn_template, summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (title_1, title_1, title_1)
         print warn_text
-    def teh_log(self): #naming conflict
-        ## See line 10 for the log page ##
-        ## We don't check the checkpage here because we want to remember what pages we tagged (even if the bot makes errors) ##
+        
+    def Onwiki_log(self): 
+        ## See line 10 for the log page. We don't check the checkpage here because we want to remember what pages we tagged (even if the bot is making errors) ##
         log_content = self.log.get(get_redirect = True)
         log_content = log_content + "\n" + "# [[:" + title_1 + "]]:" + reason2 + "{{subst:#time: r|now}}"
         self.log.put(log_content, "[[User:RileyBot|Bot]]: Logging [[WP:proposed deletion|proposed deletion]] nomination of [[" + title_1 + "]].) ([[User:RileyBot/10|Task 10]]")
