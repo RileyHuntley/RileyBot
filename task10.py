@@ -28,8 +28,8 @@ import pywikibot
 import robot
 
 ## Variables ##
-reason = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
-warn_template = u'{{subst:Proposed deletion notify|%s|concern=%s}} ~~~~'
+reason2 = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
+warn_template = u'{{subst:Proposed deletion notify|%s|concern=Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].}} ~~~~'
 ## Regex ##
 regex_skip = """\{\{(Template:)?([Pp]ROD
 |[Pp]roD
@@ -71,7 +71,7 @@ class ProdRobot(robot.Robot):
         if not REGEX.findall(text):
             if not page.exists():
                 self.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
-        newtext = '{{subst:Proposed deletion|%s}}\n' % (reason) + newtext
+        newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
         ## Check ##
         self.check_page()
         if text != page.get():
@@ -94,18 +94,18 @@ class ProdRobot(robot.Robot):
         warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
         if page.isRedirectPage():
             self.output('Page %s is a redirect; skipping.' % page.title())
-        warn_text = warn_template % (page.title(), reason)
+        warn_text = warn_template % (page.title(), reason2)
         warn_text = warn_text.encode('utf-8')
         ## Double check ##
         self.check_page()
-        ###THIS DOESNT WORK
-        warn_pg.put(warn_text, section="new", sectiontitle="== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==", summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (warn_title, warn_title)
+        ###MIGHT WORK NOW
+        warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==" + warn_template, summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (title_1, title_1, title_1)
         print warn_text
     def teh_log(self): #naming conflict
         ## See line 10 for the log page ##
         ## We don't check the checkpage here because we want to remember what pages we tagged (even if the bot makes errors) ##
         log_content = self.log.get(get_redirect = True)
-        log_content = log_content + "\n" + "# [[:" + title_1 + "]]:" + reason + "{{subst:#time: r|now}}"
+        log_content = log_content + "\n" + "# [[:" + title_1 + "]]:" + reason2 + "{{subst:#time: r|now}}"
         self.log.put(log_content, "[[User:RileyBot|Bot]]: Logging [[WP:proposed deletion|proposed deletion]] nomination of [[" + title_1 + "]].) ([[User:RileyBot/10|Task 10]]")
 
     def run(self):
