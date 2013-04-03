@@ -86,8 +86,8 @@ class ProdRobot(robot.Robot):
             pywikibot.output(
                 u'Skipping %s because of edit conflict'
                 % (page.title()))
-        creator = page.getCreator()
-        self.warn_user(creator, page)
+        creator = get_creator(title)
+        self.warn_user(page.title(creator))
 
     def warn_user(self, creator, page):
         warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
