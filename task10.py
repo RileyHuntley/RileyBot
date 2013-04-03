@@ -52,7 +52,7 @@ class ProdRobot(robot.Robot):
         self.log = pywikibot.Page(self.site, 'User:RileyBot/Logs/10')
 
     def list_of_pages(self):
-        return self.page_with_links.linkedPages(namespaces=0) 
+        return self.page_with_links.linkedPages(namespaces=2) ### Maine = (namespaces=0) ###
 
     def check_page(self):
         text = self.stop_page.get(force=True)
