@@ -85,7 +85,7 @@ class ProdRobot(robot.Robot):
         if not REGEX.findall(text):
             if not page.exists():
                 self.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
-        self.reason = '[[User:RileyBot|Bot]] trial: Nominating ' + title_1 + ' for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
+        self.reason = '[[User:RileyBot|Bot]] trial: Nominating [[' + title_1 + ']] for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
         newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
         ## Check ##
         self.check_page()
@@ -113,7 +113,7 @@ class ProdRobot(robot.Robot):
         ## Double check ##
         self.check_page()
         ###MIGHT WORK NOW
-        warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of " + title_1 + " ==" + "\n" + warn_template, "[[User:RileyBot|Bot]] notification: proposed deletion of " + title_1 + ".) ([[User:RileyBot/10|Task 10]]") % (title_1)
+        warn_pg.put(warn_text + "\n" + warn_template % page.title(), "[[User:RileyBot|Bot]] notification: proposed deletion of [[" + page.title() + "]].) ([[User:RileyBot/10|Task 10]]")  
         print warn_text
 
     def Onwiki_log(self):
