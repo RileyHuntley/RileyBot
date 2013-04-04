@@ -12,7 +12,7 @@ regex_skip    =  [
                   u'proposal to delete',
                   u'proposed deletion',
                  ]
-regex_skip    = ur'"\\{(Template:)?('+u'|'.join(regex_skip)+u')'
+regex_skip    = ur'\{(Template:)?('+u'|'.join(regex_skip)+u')'
 REGEX         = re.compile(regex_skip, flags=re.IGNORECASE)
 site          = wikipedia.getSite()
 # page where run logs are uploaded to
@@ -94,7 +94,7 @@ def warn_user(page):
   try:
     # save the talk page and log the details
     talk_page.put(text, u"[[User:RileyBot|Bot]] notification: proposed deletion of [[%s]] [[User:RileyBot/10|Task 10]]" % page.title())
-    log(u'Notifying [[User:%s]] about [[%s]]' % (page.title()))
+    log(u'Notifying [[User:%s]] about [[%s]]' % (creator,page.title()))
   except wikipedia.LockedPage:
     log(u"Page %s is locked; skipping." % (talk_page.title()))
   except wikipedia.EditConflict:
