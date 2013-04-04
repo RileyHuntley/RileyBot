@@ -1,111 +1,127 @@
 #!/usr/bin/python
 # -*- coding: utf-8  -*-
-#
-"""
-Copyright (C) 2013 Riley Huntley, Legoktm
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.
-"""
+import pagegenerators
+import codecs
 import os
 import re
+import time
 import wikipedia
-import robot
+# array of strings to search for and exclude those from re-tagging
+regex_skip    =  [
+                  u'prod',
+                  u'proposal to delete',
+                  u'proposed deletion',
+                 ]
+regex_skip    = ur'"\\{(Template:)?('+u'|'.join(regex_skip)+u')'
+REGEX         = re.compile(regex_skip, flags=re.IGNORECASE)
+site          = wikipedia.getSite()
+# page where run logs are uploaded to
+log_page      = wikipedia.Page(site,u'User:RileyBot/Logs/10')
+# links from this page are what get tagged
+source_page   = wikipedia.Page(site,u'User:Riley_Huntley/Sandbox')
+# automated shutdown feature
+stop_page     = wikipedia.Page(site,u'User:RileyBot/Stop/10')
+# PROD reason
+tag_reason    = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
+# user talk page notice
+warn_template = u'{{subst:Proposed deletion notify|%s|concern='+tag_reason+'}} ~~~~'
 
-## Variables ##
-reason2 = u'Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].'
-warn_template = u'{{subst:Proposed deletion notify|%s|concern=Non-notable diplomat stub article. For the relevant notability policy, please see [[Wikipedia:Notability_(people)#Diplomats|Wikipedia:Notability (people)#Diplomats]].}} ~~~~'
-## Regex ##
-regex_skip = """\{\{(Template:)?([Pp]ROD
-|[Pp]roD
-|[Pp]rod
-|[Pp]roposal to delete
-|[Pp]roposed deletion)"""
-regex_skip = regex_skip.replace('\n', '')
-REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
-
-class ProdRobot(robot.Robot):
-    def __init__(self):
-        robot.Robot.__init__(self, task=10)
-        self.site = wikipedia.getSite()
-        self.page_with_links = wikipedia.Page(self.site, 'User:Riley_Huntley/Sandbox') ### [[User:Kleinzach/Dips]] ###
-        ## Does this even work? ##
-        self.trial = True
-        self.trial_max = 20
-        self.stop_page = wikipedia.Page(self.site, 'User:RileyBot/Stop/10')
-        self.log = wikipedia.Page(self.site, 'User:RileyBot/Logs/10')
-
-    def list_of_pages(self):
-        return self.page_with_links.linkedPages(namespaces=2) ### Main = (namespaces=0) ###
-
-    def check_page(self):
-        text = self.stop_page.get(force=True)
-        if text.lower() != 'run':
-            log_contentError = self.log.get(get_redirect = True)
-            log_contentError = log_contentError + "\n\n" + "# [[:User:RileyBot/Stop/10]]: '''Error: Stop page disabled.''' {{subst:#time: r|now}}" + "\n"
-            self.log.put(log_contentError, "[[User:RileyBot|Bot]]: Logging error; Stop page disabled.) ([[User:RileyBot/10|Task 10]]")
-            raise Exception("Stop page disabled")
-
-    def do_page(self, page):
-        title_1 = page.title()
-        
-        if page.isRedirectPage():
-            wikipedia.output('Page %s is a redirect; skipping.' % page.title())
-            return
+def main():
+  log('Run started')
+  # get a list of pages to tag
+  pages_to_work_on = [x for x in pagegenerators.NamespaceFilterPageGenerator(source_page.linkedPages(),[2])]
+  for page in pages_to_work_on:
+    # is the bot allowed to do this task?
+    check_page()
+    # if page has already been deleted, log and skip
+    if page.exists():
+      # check if it is a redirect, if it is log and skip
+      if not page.isRedirectPage():
+        # get page contents
         text = page.get()
-        if not REGEX.findall(text):
-            if not page.exists():
-                wikipedia.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
-        newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
-        ## Check ##
-        self.check_page()
-        wikipedia.showDiff(text, newtext)
-        try:
+        # check to see if there is a template on the black list, if it is log and skip
+        if not REGEX.search(text):
+          # add PROD notice
+          newtext = '{{subst:Proposed deletion|%s}}\n%s' % (tag_reason,text)
+          try:
+            # try and save the page and log it
             page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Nominating [[%s]] for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]' % page.title(), watchArticle = False, minorEdit = True)
-        except wikipedia.LockedPage:
-            wikipedia.output(u"Page %s is locked; skipping." % page.title(asLink=True))
-        except wikipedia.EditConflict:  
-            wikipedia.output( u'Skipping %s because of edit conflict' % (page.title()))
-        
-        self.warn_user(page)
+            log(u'Tagging [[%s]]' % page.title())
+          # page is protected
+          except wikipedia.LockedPage:
+            log(u"Page %s is locked; skipping." % page.title())
+          # Edit conflicted with another user
+          except wikipedia.EditConflict:
+            log(u'Skipping %s because of edit conflict' % (page.title()))
+          # some unknown error has occurred, log and review at a latter date
+          except:
+            log(u'Skipping %s because of unknown error' % (page.title()))
+          # page has been tagged for PROD now need to notify the creator
+          warn_user(page)
+        else:
+          log('[[%s]] ignored due to regular expression' % page.title())
+      else:
+        log('Page %s is a redirect; skipping.' % page.title())
+    else:
+      log('Page %s does not exist; skipping.' % page.title())
+  shut_down()
+  
+def check_page():
+  # get check page and if contents are not 'run' have the bot shutdown as someone has disabled the bot
+  text = stop_page.get(force=True)
+  if text.lower() != u'run':
+    log('Check page disabled')
+    shut_down()
+# notfy a user about a page that has been tagged for deletion, dont check the stop page as we want to avoid not notifying the creator of the talk page
+def warn_user(page):
+  # get the first person to edit the page not 100% reliable but is the best for identifying who created a page
+  creator,ts = page.getCreator()
+  # create a page object for their talk page
+  talk_page = wikipedia.Page(site,u'User talk:%s' % creator)
+  # due to renames, switching accounts and what not sometimes the talk page has been redirected to a different username if so find out and use that as the correct page
+  if talk_page.isRedirectPage():
+    talk_page = talk_page.getRedirectTarget()
+    if not talk_page.isTalkPage():
+      # for some reason the new talk page isnt a talk page (banned/blocked user, whos talk page redirects to their user page ect)
+      log(u'Unable to locate talk page for [[User:%s]]' % creator)
+      return
+  # format talk page notice
+  warn_text = warn_template % (page.title())
+  # get user talk page contents
+  text = talk_page.get()
+  # combine the two
+  text+=u"\n%s" % warn_text
+  try:
+    # save the talk page and log the details
+    talk_page.put(text, u"[[User:RileyBot|Bot]] notification: proposed deletion of [[%s]] [[User:RileyBot/10|Task 10]]" % page.title())
+    log(u'Notifying [[User:%s]] about [[%s]]' % (page.title()))
+  except wikipedia.LockedPage:
+    log(u"Page %s is locked; skipping." % (talk_page.title()))
+  except wikipedia.EditConflict:
+    log(u'Skipping %s because of edit conflict' % (talk_page.title()))
+  except:
+    log(u'Skipping %s because of unknown error' % (talk_page.title()))
+  return
+# used to wrap up and cleanly exit the program, can be called from mutiple locations within the program 
+def shut_down():
+  # log shutdown
+  log(u'Run Ended')
+  # get the contents of the log file
+  f = codecs.open('RileyBot10.txt','r', 'utf-8')
+  log_text = f.read()
+  f.close()
+  text = log_page.get()
+  # post the log file to the wiki log page
+  log_page.put(log_text,'Uploading all logs for [[User:RileyBot/10|Task 10]]')
 
-    def warn_user(self,page):
-        creator = page.getCreator()
-        talk_page = wikipedia.Page(self.site, u'User talk:%s' % creator)
-        if talk_page.isRedirectPage():
-            wikipedia.output('Page %s is a redirect; skipping.' % page.title())
-            return
-        warn_text = warn_template % (page.title())
-        text = talk_page.get()
-        text+=u"\n%s" % warn_text
-        talk_page.put(text, "[[User:RileyBot|Bot]] notification: proposed deletion of [[" + page.title() + "]].) ([[User:RileyBot/10|Task 10]]")  
-        wikipedia.output( text)
-
-    def Onwiki_log(self):
-    ## See line 10 for the log page. We don't check the checkpage here because we want to remember what pages we tagged (even if the bot is making errors) ##
-        log_content = self.log.get(get_redirect = True)
-        log_content = log_content + "\n" + "# [[:" + title_1 + "]]:" + reason2 + "{{subst:#time: r|now}}"
-        self.log.put(log_content, "[[User:RileyBot|Bot]]: Logging [[WP:proposed deletion|proposed deletion]] nomination of [[" + title_1 + "]].) ([[User:RileyBot/10|Task 10]]")
-
-    def run(self):
-        for page in self.list_of_pages():
-            self.do_page(page)
+# general logging function
+def log(text):
+  # timestamp every item to make tracking easier, also use UTC time to avoid local issues
+  tm = time.strftime(u'%Y-%m-%d %H:%M:%S',time.gmtime())
+  f3 = codecs.open('RileyBot10.txt', 'a', 'utf-8')
+  # post every item to its own line
+  f3.write('\n* %s\t%s' % (tm,text))
+  f3.close()
 
 if __name__ == "__main__":
-    bot = ProdRobot()
-    bot.run()
+  main()
