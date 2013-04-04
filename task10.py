@@ -51,9 +51,7 @@ def get_creator(site, title):
     req = pywikibot.data.api.Request(site=site, **params)
     data = req.submit()
     return data['query']['pages'].values()[0]['revisions'][0]['user']
-
-
-
+    
 class ProdRobot(robot.Robot):
     def __init__(self):
         robot.Robot.__init__(self, task=10)
@@ -66,7 +64,7 @@ class ProdRobot(robot.Robot):
         self.log = pywikibot.Page(self.site, 'User:RileyBot/Logs/10')
 
     def list_of_pages(self):
-        return self.page_with_links.linkedPages(namespaces=2) ### Maine = (namespaces=0) ###
+        return self.page_with_links.linkedPages(namespaces=2) ### Main = (namespaces=0) ###
 
     def check_page(self):
         text = self.stop_page.get(force=True)
@@ -86,7 +84,7 @@ class ProdRobot(robot.Robot):
             if not page.exists():
                 self.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
         self.reason = '[[User:RileyBot|Bot]] trial: Nominating [[' + title_1 + ']] for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
-        newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
+		newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
         ## Check ##
         self.check_page()
         if text != page.get():
