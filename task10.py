@@ -59,7 +59,6 @@ class ProdRobot(robot.Robot):
         robot.Robot.__init__(self, task=10)
         self.site = pywikibot.getSite()
         self.page_with_links = pywikibot.Page(self.site, 'User:Riley_Huntley/Sandbox') ### [[User:Kleinzach/Dips]] ###
-        self.reason = '[[User:RileyBot|Bot]] trial: Nominating %s for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
         ## Does this even work? ##
         self.trial = True
         self.trial_max = 20
@@ -86,6 +85,7 @@ class ProdRobot(robot.Robot):
         if not REGEX.findall(text):
             if not page.exists():
                 self.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
+        self.reason = '[[User:RileyBot|Bot]] trial: Nominating ' + title_1 + ' for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
         newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
         ## Check ##
         self.check_page()
@@ -108,12 +108,12 @@ class ProdRobot(robot.Robot):
         warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
         if page.isRedirectPage():
             self.output('Page %s is a redirect; skipping.' % page.title())
-        warn_text = warn_template % (page.title(), reason2)
+        warn_text = warn_template % (page.title())
         warn_text = warn_text.encode('utf-8')
         ## Double check ##
         self.check_page()
         ###MIGHT WORK NOW
-        warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==" + "\n" + warn_template, summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (title_1, title_1, title_1)
+        warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of " + title_1 + " ==" + "\n" + warn_template, "[[User:RileyBot|Bot]] notification: proposed deletion of " + title_1 + ".) ([[User:RileyBot/10|Task 10]]") % (title_1)
         print warn_text
 
     def Onwiki_log(self):
