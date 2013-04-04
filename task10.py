@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8  -*-
+import sys 
 import pagegenerators
 import codecs
 import os
@@ -18,7 +19,7 @@ site          = wikipedia.getSite()
 # page where run logs are uploaded to
 log_page      = wikipedia.Page(site,u'User:RileyBot/Logs/10')
 # links from this page are what get tagged
-source_page   = wikipedia.Page(site,u'User:Riley_Huntley/Sandbox')
+source_page   = wikipedia.Page(site,u'User:RileyBot/Trial/10')
 # automated shutdown feature
 stop_page     = wikipedia.Page(site,u'User:RileyBot/Stop/10')
 # PROD reason
@@ -29,7 +30,7 @@ warn_template = u'{{subst:Proposed deletion notify|%s|concern='+tag_reason+'}} ~
 def main():
   log('Run started')
   # get a list of pages to tag
-  pages_to_work_on = [x for x in pagegenerators.NamespaceFilterPageGenerator(source_page.linkedPages(),[2])]
+  pages_to_work_on = [x for x in pagegenerators.NamespaceFilterPageGenerator(source_page.linkedPages(),[0])]
   for page in pages_to_work_on:
     # is the bot allowed to do this task?
     check_page()
@@ -45,7 +46,7 @@ def main():
           newtext = '{{subst:Proposed deletion|%s}}\n%s' % (tag_reason,text)
           try:
             # try and save the page and log it
-            page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Nominating [[%s]] for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]' % page.title(), watchArticle = False, minorEdit = True)
+            page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Nominating [[%s]] for [[WP:proposed deletion|proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]' % page.title(), watchArticle = False, minorEdit = True)
             log(u'Tagging [[%s]]' % page.title())
           # page is protected
           except wikipedia.LockedPage:
@@ -67,9 +68,9 @@ def main():
   shut_down()
   
 def check_page():
-  # get check page and if contents are not 'run' have the bot shutdown as someone has disabled the bot
+  # get check page and if contents are not 'enable' have the bot shutdown as someone has disabled the bot
   text = stop_page.get(force=True)
-  if text.lower() != u'run':
+  if text.lower() != u'enable':
     log('Check page disabled')
     shut_down()
 # notfy a user about a page that has been tagged for deletion, dont check the stop page as we want to avoid not notifying the creator of the talk page
@@ -93,7 +94,7 @@ def warn_user(page):
   text+=u"\n%s" % warn_text
   try:
     # save the talk page and log the details
-    talk_page.put(text, u"[[User:RileyBot|Bot]] notification: proposed deletion of [[%s]] [[User:RileyBot/10|Task 10]]" % page.title())
+    talk_page.put(text, u"[[User:RileyBot|Bot]] notification: Proposed deletion of [[%s]].) ([[User:RileyBot/10|Task 10]]" % page.title())
     log(u'Notifying [[User:%s]] about [[%s]]' % (creator,page.title()))
   except wikipedia.LockedPage:
     log(u"Page %s is locked; skipping." % (talk_page.title()))
@@ -112,8 +113,8 @@ def shut_down():
   f.close()
   text = log_page.get()
   # post the log file to the wiki log page
-  log_page.put(log_text,'Uploading all logs for [[User:RileyBot/10|Task 10]]')
-
+  log_page.put(log_text,'Uploading logs for [[User:RileyBot/10|Task 10]]')
+  sys.exit(0)
 # general logging function
 def log(text):
   # timestamp every item to make tracking easier, also use UTC time to avoid local issues
