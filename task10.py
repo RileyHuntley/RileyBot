@@ -24,7 +24,7 @@ IN THE SOFTWARE.
 """
 import os
 import re
-import pywikibot
+import wikipedia
 import robot
 
 ## Variables ##
@@ -39,29 +39,16 @@ regex_skip = """\{\{(Template:)?([Pp]ROD
 regex_skip = regex_skip.replace('\n', '')
 REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
 
-def get_creator(site, title):
-    #&prop=revisions&titles=File:Eksempel%20p%C3%A5%20s%C3%B8kemotor%202013-04-03%2016-12.jpg&rvprop=timestamp|user|comment&rvdir=newer&rvlimit=1&format=jsonfm
-    params = {'action': 'query',
-              'prop': 'revisions',
-              'titles': title,
-              'rvprop': 'user',
-              'rvdir': 'newer',
-              'rvlimit': '1',
-              }
-    req = pywikibot.data.api.Request(site=site, **params)
-    data = req.submit()
-    return data['query']['pages'].values()[0]['revisions'][0]['user']
-    
 class ProdRobot(robot.Robot):
     def __init__(self):
         robot.Robot.__init__(self, task=10)
-        self.site = pywikibot.getSite()
-        self.page_with_links = pywikibot.Page(self.site, 'User:Riley_Huntley/Sandbox') ### [[User:Kleinzach/Dips]] ###
+        self.site = wikipedia.getSite()
+        self.page_with_links = wikipedia.Page(self.site, 'User:Riley_Huntley/Sandbox') ### [[User:Kleinzach/Dips]] ###
         ## Does this even work? ##
         self.trial = True
         self.trial_max = 20
-        self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Stop/10')
-        self.log = pywikibot.Page(self.site, 'User:RileyBot/Logs/10')
+        self.stop_page = wikipedia.Page(self.site, 'User:RileyBot/Stop/10')
+        self.log = wikipedia.Page(self.site, 'User:RileyBot/Logs/10')
 
     def list_of_pages(self):
         return self.page_with_links.linkedPages(namespaces=2) ### Main = (namespaces=0) ###
@@ -76,45 +63,38 @@ class ProdRobot(robot.Robot):
 
     def do_page(self, page):
         title_1 = page.title()
+        
         if page.isRedirectPage():
-            self.output('Page %s is a redirect; skipping.' % page.title())
+            wikipedia.output('Page %s is a redirect; skipping.' % page.title())
             return
-        newtext = text = page.get()
+        text = page.get()
         if not REGEX.findall(text):
             if not page.exists():
-                self.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
-        self.reason = '[[User:RileyBot|Bot]] trial: Nominating [[' + title_1 + ']] for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]'
-		newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
+                wikipedia.output('Page %s does not exist; skipping'  % page.title()) #<-- THIS NEEDS to BE DONE BEFORE YOU .get()
+        newtext = '{{subst:Proposed deletion|%s}}\n' % (reason2) + newtext
         ## Check ##
         self.check_page()
-        if text != page.get():
-            pywikibot.output(u"\n\n>>> \03{lightpurple}%s\03{default} <<<"
-                             % page.title())
-        pywikibot.showDiff(text, newtext)
-        page.put(text, comment=self.reason, watchArticle = True, minorEdit = True)
-        if pywikibot.LockedPage:
-            pywikibot.output(u"Page %s is locked; skipping."
-                             % page.title(asLink=True))
-        if pywikibot.EditConflict:
-            pywikibot.output(
-                u'Skipping %s because of edit conflict'
-                % (page.title()))
-        creator = get_creator(self.site, page.title())
-        self.warn_user(creator, page)
+        wikipedia.showDiff(text, newtext)
+        try:
+            page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Nominating [[%s]] for [[WP:proposed deletion|Proposed deletion]] by request of [[User:Kleinzach|Kleinzach]].) ([[User:RileyBot/10|Task 10]]' % page.title(), watchArticle = False, minorEdit = True)
+        except wikipedia.LockedPage:
+            wikipedia.output(u"Page %s is locked; skipping." % page.title(asLink=True))
+        except wikipedia.EditConflict:  
+            wikipedia.output( u'Skipping %s because of edit conflict' % (page.title()))
+        
+        self.warn_user(page)
 
-    def warn_user(self, creator, page):
-        warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
-        if warn_pg.isRedirectPage():
-            pywikibot.output('Page %s is a redirect; skipping.' % page.title())
+    def warn_user(self,page):
+        creator = page.getCreator()
+        talk_page = wikipedia.Page(self.site, u'User talk:%s' % creator)
+        if talk_page.isRedirectPage():
+            wikipedia.output('Page %s is a redirect; skipping.' % page.title())
             return
         warn_text = warn_template % (page.title())
-        text = warn_pg.get()
-        text+=u"\n%s" % warn_template % page.title()
-        ## Double check ##
-        self.check_page()
-        ###MIGHT WORK NOW
-        warn_pg.put(text, "[[User:RileyBot|Bot]] notification: proposed deletion of [[" + page.title() + "]].) ([[User:RileyBot/10|Task 10]]")  
-        pywikibot.output( warn_text)
+        text = talk_page.get()
+        text+=u"\n%s" % warn_text
+        talk_page.put(text, "[[User:RileyBot|Bot]] notification: proposed deletion of [[" + page.title() + "]].) ([[User:RileyBot/10|Task 10]]")  
+        wikipedia.output( text)
 
     def Onwiki_log(self):
     ## See line 10 for the log page. We don't check the checkpage here because we want to remember what pages we tagged (even if the bot is making errors) ##
