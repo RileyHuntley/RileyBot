@@ -39,6 +39,21 @@ regex_skip = """\{\{(Template:)?([Pp]ROD
 regex_skip = regex_skip.replace('\n', '')
 REGEX = re.compile(regex_skip, flags=re.IGNORECASE)
 
+def get_creator(site, title):
+    #&prop=revisions&titles=File:Eksempel%20p%C3%A5%20s%C3%B8kemotor%202013-04-03%2016-12.jpg&rvprop=timestamp|user|comment&rvdir=newer&rvlimit=1&format=jsonfm
+    params = {'action': 'query',
+              'prop': 'revisions',
+              'titles': title,
+              'rvprop': 'user',
+              'rvdir': 'newer',
+              'rvlimit': '1',
+              }
+    req = pywikibot.data.api.Request(site=site, **params)
+    data = req.submit()
+    return data['query']['pages'].values()[0]['revisions'][0]['user']
+
+
+
 class ProdRobot(robot.Robot):
     def __init__(self):
         robot.Robot.__init__(self, task=10)
@@ -86,8 +101,8 @@ class ProdRobot(robot.Robot):
             pywikibot.output(
                 u'Skipping %s because of edit conflict'
                 % (page.title()))
-        creator = get_creator(title)
-        self.warn_user(page.title(creator))
+        creator = get_creator(self.site, page.title())
+        self.warn_user(creator, page)
 
     def warn_user(self, creator, page):
         warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
@@ -100,9 +115,9 @@ class ProdRobot(robot.Robot):
         ###MIGHT WORK NOW
         warn_pg.put(warn_text + "\n" + "== [[Wikipedia:Proposed deletion|Proposed deletion]] of %s ==" + "\n" + warn_template, summary="[[User:RileyBot|Bot]] notification: proposed deletion of %s.) ([[User:RileyBot/10|Task 10]]", bot=10) % (title_1, title_1, title_1)
         print warn_text
-        
-    def Onwiki_log(self): 
-        ## See line 10 for the log page. We don't check the checkpage here because we want to remember what pages we tagged (even if the bot is making errors) ##
+
+    def Onwiki_log(self):
+    ## See line 10 for the log page. We don't check the checkpage here because we want to remember what pages we tagged (even if the bot is making errors) ##
         log_content = self.log.get(get_redirect = True)
         log_content = log_content + "\n" + "# [[:" + title_1 + "]]:" + reason2 + "{{subst:#time: r|now}}"
         self.log.put(log_content, "[[User:RileyBot|Bot]]: Logging [[WP:proposed deletion|proposed deletion]] nomination of [[" + title_1 + "]].) ([[User:RileyBot/10|Task 10]]")
