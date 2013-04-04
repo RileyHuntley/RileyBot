@@ -104,15 +104,17 @@ class ProdRobot(robot.Robot):
 
     def warn_user(self, creator, page):
         warn_pg = pywikibot.Page(self.site, 'User talk:'+creator)
-        if page.isRedirectPage():
-            self.output('Page %s is a redirect; skipping.' % page.title())
+        if warn_pg.isRedirectPage():
+            pywikibot.output('Page %s is a redirect; skipping.' % page.title())
+            return
         warn_text = warn_template % (page.title())
-        warn_text = warn_text.encode('utf-8')
+        text = warn_pg.get()
+        text+=u"\n%s" % warn_template % page.title()
         ## Double check ##
         self.check_page()
         ###MIGHT WORK NOW
-        warn_pg.put(warn_text + "\n" + warn_template % page.title(), "[[User:RileyBot|Bot]] notification: proposed deletion of [[" + page.title() + "]].) ([[User:RileyBot/10|Task 10]]")  
-        print warn_text
+        warn_pg.put(text, "[[User:RileyBot|Bot]] notification: proposed deletion of [[" + page.title() + "]].) ([[User:RileyBot/10|Task 10]]")  
+        pywikibot.output( warn_text)
 
     def Onwiki_log(self):
     ## See line 10 for the log page. We don't check the checkpage here because we want to remember what pages we tagged (even if the bot is making errors) ##
