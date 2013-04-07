@@ -17,22 +17,18 @@ def log(text):
   # post every item to its own line
   f3.write('\n* %s\t%s' % (tm,text))
   f3.close()
-  
-def check_page():
-  # get check page and if contents are not 'enable' have the bot log that the bot has been disabled
-  text = page3.get
-  if text.lower() != u'enable':
-    log('Check page disabled')
-    
+
 def generate(wiki):
-    print "Working on " + wiki
+	print "Working on " + wiki
 	log('Working on' + wiki)
 	site1 = mwclient.Site(wiki)
 	site1.login(settings.username, settings.password)
 	data = site1.watchlist(prop="ids|timestamp|title")
-	page3 = site1.Pages['User:RileyBot/Stop']
-	check_page()
-	print data
+        page3 = site1.Pages['User:RileyBot/Stop']
+        text3 = page3.get
+        if text3.lower() != u'enable':
+            log('Check page disabled')
+        print data
 	
 	global l
 	l.append("\n=== " + wiki + " ===")
