@@ -24,6 +24,10 @@ def generate(wiki):
         site1 = mwclient.Site(wiki)
         site1.login(settings.username, settings.password)
         data = site1.watchlist(prop="ids|timestamp|title")
+        text3 = page3.get
+	if text3.lower() != u'enable':
+		log('Check page disabled')
+	page3 = site1.Pages['User:RileyBot/Stop']
         print data
 
         global l
@@ -79,4 +83,3 @@ def shut_down():
         # post the log file to the wiki log page
         log_page.save(log_text,'[[User:RileyBot|Bot]]: Uploading logs for [[User:RileyBot/Watchlist|Watchlist]]')
         sys.exit(0)
-        # general logging function
