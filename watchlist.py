@@ -6,7 +6,7 @@ site.login(settings.username, settings.password)
 kwargs = {'action':'query',
           'list':'watchlist',
                   'wllimit':'5',
-  	  'wlowner':settings.username,
+  	  	  'wlowner':settings.username,
 		  'wltoken':settings.token,
 		  'wlshow':'!bot',
 		  'wlprop':'user|comment|timestamp|sizes|flags',
