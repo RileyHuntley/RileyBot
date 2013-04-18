@@ -55,7 +55,7 @@ def main():
             else:
                 log('Page %s was in skip list.' % page2.title())
         else:
-            log('Page %s is not in the article namespace.' % page0.title())
+            log('Page %s is not in the article namespace.' % page.title())
     shut_down()
 def check_page():
     text = stop_page.get(force=True)
@@ -70,7 +70,7 @@ def shut_down():
     f.close()
     text = log_page.get()
     log_page.put(log_text,'Uploading logs for [[User:RileyBot/11|Task 11]]')
-    sys.exit(0)
+    wikipedia.stopme()
 
 def log(text):
     tm = time.strftime(u'%Y-%m-%d %H:%M:%S',time.gmtime())
