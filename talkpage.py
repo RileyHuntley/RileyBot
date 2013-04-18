@@ -21,7 +21,7 @@ stop_page = wikipedia.Page(site,u'User:RileyBot/Stop/11')
 
 def main():
     log('Run started')
-    cat = catlib.Category(site,'Category:Organizations')
+    cat = catlib.Category(site,'Category:Companies based in Idaho')
     gen = pagegenerators.CategorizedPageGenerator(cat)
     for page in gen:
         if page.namespace() == 0:
@@ -38,7 +38,7 @@ def main():
                         if not regexp.search(text):
                             newtext = '{{COI editnotice}}\n%s' % (text)
                             try:
-                                page2.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Adding [[Template:COI editnotice]] to [[%s]].) ([[User:RileyBot/11|Task 11]]' % page.title(), watchArticle = False, minorEdit = True)
+                                page2.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Added [[Template:COI editnotice]] to [[%s]]) ([[User:RileyBot/11|Task 11]]' % page.title(), watchArticle = False, minorEdit = True)
                                 log(u'Saved edit on [[%s]]' % page2.title())
                             except wikipedia.LockedPage:
                                 log(u"Page %s is locked; skipping." % page2.title())
