@@ -55,7 +55,7 @@ def main():
             else:
                 log('Page %s was in skip list.' % page2.title())
         else:
-            log('Page %s is not in mainspace.' % page2.title())
+            log('Page %s is not in mainspace.' % page0.title())
     shut_down()
 def check_page():
     text = stop_page.get(force=True)
