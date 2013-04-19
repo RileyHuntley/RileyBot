@@ -70,7 +70,7 @@ def shut_down():
     f.close()
     text = log_page.get()
     log_page.put(log_text,'Uploading logs for [[User:RileyBot/11|Task 11]]')
-    wikipedia.stopme()
+    sys.exit(0)
 
 def log(text):
     tm = time.strftime(u'%Y-%m-%d %H:%M:%S',time.gmtime())
