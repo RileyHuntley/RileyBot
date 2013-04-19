@@ -131,6 +131,8 @@ class SandboxBot:
     def __init__(self, hours, no_repeat, delay, user):
         self.hours = hours
         self.no_repeat = no_repeat
+        self.stop_page_graffiti_wall = pywikibot.Page(self.site, 'User:RileyBot/Stop/Graffiti wall')
+        self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Stop')
         if delay == None:
             self.delay = min(15, max(5, int(self.hours *60)))
         else:
@@ -174,8 +176,6 @@ class SandboxBot:
                 titles = [localSandboxTitle,]
             for title in titles:
                 sandboxPage = pywikibot.Page(mySite, title)
-                self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Stop/Graffiti wall')
-                self.check_page()
                 pywikibot.output(u'en.wikivoyage: Preparing to process graffiti wall page %s' % sandboxPage.title(asLink=True))
                 try:
                     text = sandboxPage.get()
@@ -185,6 +185,7 @@ class SandboxBot:
                     subst = 'subst:' in translatedContent
                     pos = text.find(translatedContent.strip())
                     self.check_page()
+                    self.check_page_graffiti_wall()
                     if text.strip() == translatedContent.strip():
                         pywikibot.output(u'en.wikivoyage: The graffiti wall is still clean, no change necessary.')
                     elif subst and sandboxPage.userName() == mySite.loggedInAs():
@@ -225,12 +226,16 @@ class SandboxBot:
                 else:
                     pywikibot.output('\nSleeping %s hours, now %s' % (self.hours, now) )
                 time.sleep(self.hours * 60 * 60)
-## Check page; [[User:RileyBot/Stop/10]] ##
+
+    def check_page_graffiti_wall(self):
+        text = self.stop_page_graffiti_wall.get(force=True)
+        if text.lower() != 'enable':
+            raise Exception("Stop page disabled")
+    
     def check_page(self):
         text = self.stop_page.get(force=True)
         if text.lower() != 'enable':
             raise Exception("Stop page disabled")
-    
 def main():
     hours = 1
     delay = None
