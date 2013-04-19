@@ -59,7 +59,7 @@ and arguments can be:
 #
 # Distributed under the terms of the MIT license.
 #
-__version__='$Id$'
+__version__='$Id: redirect.py 10487 2012-08-16 08:14:41Z xqt $'
 #
 import re, sys, datetime
 import wikipedia as pywikibot
@@ -454,7 +454,8 @@ class RedirectRobot:
         self.always = always
         self.number = number
         self.exiting = False
-
+        self.stop_page_double = pywikibot.Page(self.site, 'User:RileyBot/Stop/DoubleRedirects')
+    self.stop_page_broken = pywikibot.Page(self.site, 'User:RileyBot/Stop/BrokenRedirects')
     def prompt(self, question):
         if not self.always:
             choice = pywikibot.inputChoice(question,
@@ -471,6 +472,7 @@ class RedirectRobot:
 
     def delete_broken_redirects(self):
         # get reason for deletion text
+	self.check_page_broken()
         reason = i18n.twtranslate(self.site, 'redirect-remove-broken')
         for redir_name in self.generator.retrieve_broken_redirects():
             self.delete_1_broken_redirect(redir_name, reason)
@@ -478,7 +480,8 @@ class RedirectRobot:
                 break
 
     def delete_1_broken_redirect(self, redir_name, reason):
-        redir_page = pywikibot.Page(self.site, redir_name)
+        self.check_page_broken()
+	redir_page = pywikibot.Page(self.site, redir_name)
         # Show the title of the page we're working on.
         # Highlight the title in purple.
         pywikibot.output(u"\n\n>>> \03{lightpurple}%s\03{default} <<<"
@@ -528,12 +531,14 @@ class RedirectRobot:
         pywikibot.output(u'')
 
     def fix_double_redirects(self):
+	self.check_page_double()
         for redir_name in self.generator.retrieve_double_redirects():
             self.fix_1_double_redirect(redir_name)
             if self.exiting:
                 break
 
     def fix_1_double_redirect(self,  redir_name):
+	self.check_page_double()
         redir = pywikibot.Page(self.site, redir_name)
         # Show the title of the page we're working on.
         # Highlight the title in purple.
@@ -715,7 +720,14 @@ class RedirectRobot:
         elif self.action == 'both':
             self.fix_double_or_delete_broken_redirects()
 
-
+    def check_page_double(self):
+        text = self.stop_page_double.get(force=True)
+        if text.lower() != 'enable':
+            raise Exception("Double: Stop page disabled")
+    def check_page_broken(self):
+        text = self.stop_page_broken.get(force=True)
+        if text.lower() != 'enable':
+            raise Exception("Broken: Stop page disabled")
 def main(*args):
     # read command line parameters
     # what the bot should do (either resolve double redirs, or delete broken
