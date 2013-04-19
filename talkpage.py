@@ -20,13 +20,13 @@ log_page = wikipedia.Page(site,u'User:RileyBot/Logs/11')
 stop_page = wikipedia.Page(site,u'User:RileyBot/Stop/11')
 
 def main():
+    check_page()
     log('Run started')
     cat = catlib.Category(site,'Category:Companies based in Idaho')
     gen = pagegenerators.CategorizedPageGenerator(cat)
     for page in gen:
         if page.namespace() == 0:
             if page.title() not in skip_these:
-                check_page()
                 if page.exists():
                     if not page.isRedirectPage():
                         page2 = "Talk:%s" % (page.title())
