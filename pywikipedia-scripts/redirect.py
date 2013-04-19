@@ -474,6 +474,7 @@ class RedirectRobot:
     def delete_broken_redirects(self):
         # get reason for deletion text
 	self.check_page_broken()
+	self.check_page()
         reason = i18n.twtranslate(self.site, 'redirect-remove-broken')
         for redir_name in self.generator.retrieve_broken_redirects():
             self.delete_1_broken_redirect(redir_name, reason)
@@ -482,6 +483,7 @@ class RedirectRobot:
 
     def delete_1_broken_redirect(self, redir_name, reason):
         self.check_page_broken()
+        self.check_page()
 	redir_page = pywikibot.Page(self.site, redir_name)
         # Show the title of the page we're working on.
         # Highlight the title in purple.
@@ -533,6 +535,7 @@ class RedirectRobot:
 
     def fix_double_redirects(self):
 	self.check_page_double()
+	self.check_page()
         for redir_name in self.generator.retrieve_double_redirects():
             self.fix_1_double_redirect(redir_name)
             if self.exiting:
@@ -540,6 +543,7 @@ class RedirectRobot:
 
     def fix_1_double_redirect(self,  redir_name):
 	self.check_page_double()
+	self.check_page()
         redir = pywikibot.Page(self.site, redir_name)
         # Show the title of the page we're working on.
         # Highlight the title in purple.
