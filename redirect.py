@@ -455,7 +455,8 @@ class RedirectRobot:
         self.number = number
         self.exiting = False
         self.stop_page_double = pywikibot.Page(self.site, 'User:RileyBot/Stop/DoubleRedirects')
-    self.stop_page_broken = pywikibot.Page(self.site, 'User:RileyBot/Stop/BrokenRedirects')
+    	self.stop_page_broken = pywikibot.Page(self.site, 'User:RileyBot/Stop/BrokenRedirects')
+    	self.stop_page = pywikibot.Page(self.site, 'User:RileyBot/Stop')
     def prompt(self, question):
         if not self.always:
             choice = pywikibot.inputChoice(question,
@@ -726,6 +727,10 @@ class RedirectRobot:
             raise Exception("Double: Stop page disabled")
     def check_page_broken(self):
         text = self.stop_page_broken.get(force=True)
+        if text.lower() != 'enable':
+            raise Exception("Broken: Stop page disabled")
+    def check_page(self):
+        text = self.stop_page.get(force=True)
         if text.lower() != 'enable':
             raise Exception("Broken: Stop page disabled")
 def main(*args):
