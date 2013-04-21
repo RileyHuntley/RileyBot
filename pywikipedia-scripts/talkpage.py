@@ -42,21 +42,21 @@ def main():
                                 talk_page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Added [[Template:COI editnotice]] to [[%s]]) ([[User:RileyBot/11|Task 11]]' % page.title(), watchArticle = False, minorEdit = True)
                                 log(u'Saved edit on [[%s]]' % talk_page.title())
                             except wikipedia.LockedPage:
-                                log(u"Page %s is locked; skipping." % talk_page.title())
+                                log(u"Page [[%s]] is locked; skipping." % talk_page.title())
                             except wikipedia.EditConflict:
-                                log(u'Skipping %s because of edit conflict' % (talk_page.title()))
+                                log(u'Skipping [[%s]] because of edit conflict' % (talk_page.title()))
                             except:
-                                log(u'Skipping %s because of unknown error' % (talk_page.title()))
+                                log(u'Skipping [[%s]] because of unknown error' % (talk_page.title()))
                         else:
                             log('[[%s]] ignored due to regular expression' % talk_page.title())
                     else:
-                        log('Page %s is a redirect; skipping.' % talk_page.title())
+                        log('Page [[%s]] is a redirect; skipping.' % talk_page.title())
                 else:
-                    log('Page %s does not exist; skipping.' % talk_page.title())
+                    log('Page [[%s]] does not exist; skipping.' % talk_page.title())
             else:
-                log('Page %s was in skip list.' % talk_page.title())
+                log('Page [[%s]] was in skip list.' % talk_page.title())
         else:
-            log('Page %s is not in the article namespace.' % page.title())
+            log('Page [[%s]] is not in the article namespace.' % page.title())
     shut_down()
 def check_page():
     text = stop_page.get(force=True)
