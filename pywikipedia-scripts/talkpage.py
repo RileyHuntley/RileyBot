@@ -9,11 +9,13 @@ import os
 import re
 import time
 
-regex_skip = [u'extant organization', u'COI editnotice']
-regex_skip = ur'\{(Template:)?('+u'|'.join(regex_skip)+u')'
-regexp = re.compile(regex_skip, flags=re.IGNORECASE)
+template_skip_list = [u'extant organization', u'COI editnotice']
+template_skip_regex = re.compile(ur'\{(Template:)?('+u'|'.join(template_skip_list)+u')',re.I)
 skip_these = [u'Organization']
-
+title_blacklist = [
+                    u'list',
+                  ]
+title_blacklist_regex = re.compile(ur'(%s)' % u'|'.join(title_blacklist),re.I)
 site = wikipedia.getSite()
 
 log_page = wikipedia.Page(site,u'User:RileyBot/Logs/11')
@@ -26,34 +28,33 @@ def main():
     gen = pagegenerators.CategorizedPageGenerator(cat)
     for page in gen:
         if page.namespace() == 0:
-            if page.title() not in skip_these:
+            if page.title() not in skip_these and not title_blacklist_regex.search(page.title()):
                 if page.exists():
                     if not page.isRedirectPage():
-                        page2 = "Talk:%s" % (page.title())
-                        page2 = wikipedia.Page(site,page2)
+                        talk_page = page.toggleTalkPage()
                         try:
-                            text = page2.get()
+                            text = talk_page.get()
                         except wikipedia.NoPage:
                             text = u''
-                        if not regexp.search(text):
+                        if not template_skip_regex.search(text):
                             newtext = '{{COI editnotice}}\n%s' % (text)
                             try:
-                                page2.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Added [[Template:COI editnotice]] to [[%s]]) ([[User:RileyBot/11|Task 11]]' % page.title(), watchArticle = False, minorEdit = True)
-                                log(u'Saved edit on [[%s]]' % page2.title())
+                                talk_page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Added [[Template:COI editnotice]] to [[%s]]) ([[User:RileyBot/11|Task 11]]' % page.title(), watchArticle = False, minorEdit = True)
+                                log(u'Saved edit on [[%s]]' % talk_page.title())
                             except wikipedia.LockedPage:
-                                log(u"Page %s is locked; skipping." % page2.title())
+                                log(u"Page %s is locked; skipping." % talk_page.title())
                             except wikipedia.EditConflict:
-                                log(u'Skipping %s because of edit conflict' % (page2.title()))
+                                log(u'Skipping %s because of edit conflict' % (talk_page.title()))
                             except:
-                                log(u'Skipping %s because of unknown error' % (page2.title()))
+                                log(u'Skipping %s because of unknown error' % (talk_page.title()))
                         else:
-                            log('[[%s]] ignored due to regular expression' % page2.title())
+                            log('[[%s]] ignored due to regular expression' % talk_page.title())
                     else:
-                        log('Page %s is a redirect; skipping.' % page2.title())
+                        log('Page %s is a redirect; skipping.' % talk_page.title())
                 else:
-                    log('Page %s does not exist; skipping.' % page2.title())
+                    log('Page %s does not exist; skipping.' % talk_page.title())
             else:
-                log('Page %s was in skip list.' % page2.title())
+                log('Page %s was in skip list.' % talk_page.title())
         else:
             log('Page %s is not in the article namespace.' % page.title())
     shut_down()
