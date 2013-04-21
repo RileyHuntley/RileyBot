@@ -9,11 +9,39 @@ import os
 import re
 import time
 
-template_skip_list = [u'extant organization', u'COI editnotice']
+template_skip_list = [
+                        u'extant organization',
+                        u'COI editnotice',
+                        u'Disambiguation',
+                        u'Disambiguation page',
+                        u'Surname',
+                        u'Sportindex',
+                        u'Given name',
+                        u'DAB',
+                        u'Dab',
+                        u'Sia',
+                        u'Set index',
+                        u'SIA',
+                        u'Set index article',
+                        u'Dbig',
+                        u'Disam',
+                        u'Disamb',
+                        u'Disambig',
+                        u'Hndis',
+                        u'Hospital disambiguation',
+                        u'Mathematical disambiguation',
+                        u'Mountain index',
+                        u'Roadindex',
+                        u'School disambiguation',
+                        u'Shipindex',
+                        u'Mountain index',
+                        u'Disambiguation cleanup',
+                    ]
 template_skip_regex = re.compile(ur'\{(Template:)?('+u'|'.join(template_skip_list)+u')',re.I)
 skip_these = [u'Organization',]
 title_blacklist = [
                     u'list',
+                    u'disambiguation',
                   ]
 title_blacklist_regex = re.compile(ur'(%s)' % u'|'.join(title_blacklist),re.I)
 site = wikipedia.getSite()
@@ -42,7 +70,7 @@ def main():
                                 talk_page.put(newtext, comment=u'[[User:RileyBot|Bot]] trial: Added [[Template:COI editnotice]] to [[%s]]) ([[User:RileyBot/11|Task 11]]' % page.title(), watchArticle = False, minorEdit = True)
                                 log(u'Saved edit on [[%s]]' % talk_page.title())
                             except wikipedia.LockedPage:
-                                log(u"Page [[%s]] is locked; skipping." % talk_page.title())
+                                log(u"[[%s]] is locked; skipping." % talk_page.title())
                             except wikipedia.EditConflict:
                                 log(u'Skipping [[%s]] because of edit conflict' % (talk_page.title()))
                             except:
@@ -50,13 +78,13 @@ def main():
                         else:
                             log('[[%s]] ignored due to regular expression' % talk_page.title())
                     else:
-                        log('Page [[%s]] is a redirect; skipping.' % page.title())
+                        log('[[%s]] is a redirect; skipping.' % page.title())
                 else:
-                    log('Page [[%s]] does not exist; skipping.' % page.title())
+                    log('[[%s]] does not exist; skipping.' % page.title())
             else:
-                log('Page [[%s]] was in skip list.' % page.title())
+                log('[[%s]] was in skip list.' % page.title())
         else:
-            log('Page [[%s]] is not in the article namespace.' % page.title())
+            log('[[%s]] is not in the article namespace.' % page.title())
     shut_down()
 def check_page():
     text = stop_page.get(force=True)
