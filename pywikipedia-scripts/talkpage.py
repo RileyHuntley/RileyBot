@@ -11,7 +11,7 @@ import time
 
 template_skip_list = [u'extant organization', u'COI editnotice']
 template_skip_regex = re.compile(ur'\{(Template:)?('+u'|'.join(template_skip_list)+u')',re.I)
-skip_these = [u'Organization']
+skip_these = [u'Organization',]
 title_blacklist = [
                     u'list',
                   ]
@@ -50,11 +50,11 @@ def main():
                         else:
                             log('[[%s]] ignored due to regular expression' % talk_page.title())
                     else:
-                        log('Page [[%s]] is a redirect; skipping.' % talk_page.title())
+                        log('Page [[%s]] is a redirect; skipping.' % page.title())
                 else:
-                    log('Page [[%s]] does not exist; skipping.' % talk_page.title())
+                    log('Page [[%s]] does not exist; skipping.' % page.title())
             else:
-                log('Page [[%s]] was in skip list.' % talk_page.title())
+                log('Page [[%s]] was in skip list.' % page.title())
         else:
             log('Page [[%s]] is not in the article namespace.' % page.title())
     shut_down()
